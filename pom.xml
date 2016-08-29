@@ -30,7 +30,7 @@
     </modules>
 
     <properties>
-        <geomesa.version>1.2.5-SNAPSHOT</geomesa.version>
+        <geomesa.version>1.2.6-SNAPSHOT</geomesa.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -38,10 +38,10 @@
 
         <!-- environment specific variables-->
         <accumulo.version>1.6.4</accumulo.version>
-        <zookeeper.version>3.4.5</zookeeper.version>
+        <zookeeper.version>3.4.6</zookeeper.version>
         <hadoop.version>2.2.0</hadoop.version>
         <hbase.hadoop.version>2.5.2</hbase.hadoop.version>
-        <kafka.version>0.8.2.1</kafka.version>
+        <kafka.version>0.10.0.1</kafka.version>
         <storm.version>0.9.6</storm.version>
         <hbase.version>1.1.5</hbase.version>
     </properties>
@@ -116,7 +116,7 @@
             </dependency>
             <dependency>
                 <groupId>org.locationtech.geomesa</groupId>
-                <artifactId>geomesa-kafka-datastore</artifactId>
+                <artifactId>geomesa-kafka-10-datastore</artifactId>
                 <version>${geomesa.version}</version>
             </dependency>
             <dependency>
@@ -243,6 +243,12 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>live-test</id>
+        </profile>
+    </profiles>
 
     <scm>
         <connection>scm:git:git@github.com:geomesa/geomesa-tutorials.git</connection>

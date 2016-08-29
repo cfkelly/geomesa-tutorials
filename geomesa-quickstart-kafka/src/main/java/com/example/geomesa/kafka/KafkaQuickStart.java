@@ -200,9 +200,10 @@ public class KafkaQuickStart {
         // only create the schema if it hasn't been created already
         if (!Arrays.asList(producerDS.getTypeNames()).contains(sftName))
             producerDS.createSchema(preppedOutputSft);
-
-        System.out.println("Register KafkaDataStore in GeoServer (Press enter to continue)");
-        if (!cmd.hasOption("automated")) System.in.read();
+        if (!cmd.hasOption("automated")) {
+            System.out.println("Register KafkaDataStore in GeoServer (Press enter to continue)");
+            System.in.read();
+        }
 
         // the live consumer must be created before the producer writes features
         // in order to read streaming data.
