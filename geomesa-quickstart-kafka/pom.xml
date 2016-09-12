@@ -22,11 +22,12 @@
     <dependencies>
         <dependency>
             <groupId>org.locationtech.geomesa</groupId>
-            <artifactId>geomesa-kafka-datastore</artifactId>
+            <artifactId>geomesa-kafka-${kafka.major.version}-datastore</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.11</artifactId>
+            <version>${kafka.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
