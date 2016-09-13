@@ -190,7 +190,7 @@ public class KafkaQuickStart {
 
         // create the schema which creates a topic in Kafka
         // (only needs to be done once)
-        final String sftName = "KafkaQuickStart10";
+        final String sftName = "KafkaQuickStart09";
         final String sftSchema = "name:String,age:Int,dtg:Date,*geom:Point:srid=4326";
         SimpleFeatureType sft = SimpleFeatureTypes.createType(sftName, sftSchema);
         // set zkPath to default if not specified
