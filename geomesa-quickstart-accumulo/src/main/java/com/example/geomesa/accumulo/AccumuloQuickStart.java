@@ -11,12 +11,20 @@ package com.example.geomesa.accumulo;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
+import jline.internal.Log;
+import org.apache.accumulo.core.client.*;
+import org.apache.accumulo.core.client.impl.NamespaceOperationsImpl;
+import org.apache.accumulo.core.client.impl.Namespaces;
+import org.apache.accumulo.core.client.security.tokens.PasswordToken;
+import org.apache.accumulo.core.conf.Property;
+import org.apache.accumulo.core.security.SystemPermission;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.calrissian.mango.domain.Tuple;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
@@ -34,7 +42,10 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.locationtech.geomesa.accumulo.data.AccumuloDataStore;
 import org.locationtech.geomesa.accumulo.index.Constants;
+import org.locationtech.geomesa.accumulo.iterators.ProjectVersionIterator;
+import org.locationtech.geomesa.utils.conf.GeoMesaProperties;
 import org.locationtech.geomesa.utils.interop.SimpleFeatureTypes;
 import org.locationtech.geomesa.utils.interop.WKTUtils;
 import org.opengis.feature.Feature;
@@ -44,12 +55,13 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import scala.Tuple2;
+import scala.util.Either;
+import scala.util.control.NonFatal;
+import scala.util.control.NonFatal$;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class AccumuloQuickStart {
     static final String INSTANCE_ID = "instanceId";
@@ -294,7 +306,6 @@ public class AccumuloQuickStart {
         FeatureIterator featureItr = featureSource.getFeatures(query).features();
 
         // loop through all results
-        int n = 0;
         while (featureItr.hasNext()) {
             Feature feature = featureItr.next();
             StringBuilder sb = new StringBuilder();
@@ -319,6 +330,16 @@ public class AccumuloQuickStart {
         DataStore dataStore = DataStoreFinder.getDataStore(dsConf);
         assert dataStore != null;
 
+        // Check if iterator versions match
+        AccumuloDataStore ads = (AccumuloDataStore) dataStore;
+        Either<String, Tuple2<String, String>> temp = ads.checkIteratorVersion();
+        if(temp.isRight()){
+            Tuple2<String, String> right = temp.right().get();
+            Log.warn("Configured server-side iterators do not match client version - " +
+            "client version: " + right._1 + ", server version: " + right._2);
+            Log.warn("Exiting Accumulo QuickStart without writing features to datastore");
+            System.exit(1); // Exit with error code of 1
+        }
         // establish specifics concerning the SimpleFeatureType to store
         String simpleFeatureTypeName = "AccumuloQuickStart";
         SimpleFeatureType simpleFeatureType = createSimpleFeatureType(simpleFeatureTypeName);

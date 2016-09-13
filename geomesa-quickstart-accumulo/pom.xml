@@ -104,7 +104,7 @@
                             <executable>java</executable>
                             <arguments>
                                 <argument>-classpath</argument>
-                                <classpath />
+                                <classpath/>
                                 <argument>com.example.geomesa.accumulo.AccumuloQuickStart</argument>
                                 <argument>-instanceId</argument>
                                 <argument>${instanceId}</argument>
