@@ -41,6 +41,7 @@ public class KafkaQuickStart {
     public static final String KAFKA_BROKER_PARAM = "brokers";
     public static final String ZOOKEEPERS_PARAM = "zookeepers";
     public static final String ZK_PATH = "zkPath";
+    public static final String VISIBILITY = "visibility";
 
     public static final String[] KAFKA_CONNECTION_PARAMS = new String[] {
             KAFKA_BROKER_PARAM,
@@ -71,6 +72,11 @@ public class KafkaQuickStart {
                 .withDescription("Zookeeper's discoverable path for metadata, defaults to /geomesa/ds/kafka")
                 .create(ZK_PATH);
         options.addOption(zkPath);
+
+        Option visibility = OptionBuilder.withArgName(VISIBILITY)
+                .hasArg()
+                .create(VISIBILITY);
+        options.addOption(visibility);
 
         Option automated = OptionBuilder.withArgName("automated")
                 .create("automated");
